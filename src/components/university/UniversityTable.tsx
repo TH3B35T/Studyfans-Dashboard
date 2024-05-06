@@ -10,6 +10,7 @@ import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
 import { deleteUniversity, insertUniversity, updateUniversity, useGetUniversityList } from 'api/dashboard/university';
 import AddUniversityModal from './AddUniversityModal';
 import { debounce } from 'lodash';
+import { CSVExport } from 'components/third-party/CsvExport';
 
 const { Search } = Input;
 export const UniversityTable = () => {
@@ -105,6 +106,37 @@ export const UniversityTable = () => {
           )
       },
       {
+        title: (
+          <CSVExport
+            filename="university excel"
+            data={[
+              {
+                id: 2,
+                name: 'uni'
+              },
+              {
+                id: 20,
+                name: 'uni'
+              },
+              {
+                id: 200,
+                name: 'uni'
+              },
+              {
+                id: 2000,
+                name: 'uni'
+              },
+              {
+                id: 21,
+                name: 'uni'
+              },
+              {
+                id: 2425,
+                name: 'uni'
+              }
+            ]}
+          />
+        ),
         key: 'actions',
         fixed: 'right',
         align: 'center',

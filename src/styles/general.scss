@@ -16,6 +16,7 @@ $max-font-size: 100;
 :root {
   --primary-color: #073380;
   --secondary-color: #f19018;
+  --off-white: #eaeaea;
 }
 
 *::-webkit-scrollbar {
@@ -66,8 +67,17 @@ $max-font-size: 100;
 .antd-custom-table {
   th,
   .ant-pagination {
+    background-color: var(--off-white) !important;
+    color: var(--primary-color) !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    line-height: 8px;
+  }
+  th::before {
     background-color: var(--primary-color) !important;
-    color: white !important;
+  }
+  .ant-select-selection-item {
+    color: var(--primary-color) !important;
   }
   .ant-pagination {
     margin-top: 0 !important;
@@ -76,16 +86,16 @@ $max-font-size: 100;
     border-bottom-left-radius: 8px;
 
     svg {
-      color: white !important;
+      color: var(--primary-color) !important;
     }
     .ant-pagination-item-ellipsis {
-      color: white !important;
+      color: var(--primary-color) !important;
     }
     .ant-pagination-item-active a {
       color: var(--primary-color) !important;
     }
     a {
-      color: white !important;
+      color: var(--primary-color) !important;
     }
   }
 }
