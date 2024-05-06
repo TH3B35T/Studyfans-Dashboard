@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Flex, Input, Popconfirm } from 'antd';
+import { Button, Flex, Input, Popconfirm, type UploadFile } from 'antd';
 import { type ColumnsType } from 'antd/es/table';
 import AntdTable from 'components/shared/AntdTable';
 import Link from 'next/link';
@@ -45,7 +45,7 @@ export const UniversityTable = () => {
   };
 
   const debouncedHandleChange = debounce(handleSearch, 500);
-  const onSubmit = (e: OptionalUniversity) => {
+  const onSubmit = (e: OptionalUniversity, images: UploadFile[]) => {
     if (universityModalSettings.universityIdToUpdate) {
       updateUniversity(universityModalSettings.universityIdToUpdate, e);
       return;
@@ -144,23 +144,23 @@ export const UniversityTable = () => {
             name: 'uni'
           },
           {
-            id: 2,
+            id: 20,
             name: 'uni'
           },
           {
-            id: 2,
+            id: 200,
             name: 'uni'
           },
           {
-            id: 2,
+            id: 2000,
             name: 'uni'
           },
           {
-            id: 2,
+            id: 21,
             name: 'uni'
           },
           {
-            id: 2,
+            id: 2425,
             name: 'uni'
           }
         ]}
