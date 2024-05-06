@@ -1,0 +1,89 @@
+$max-font-size: 100;
+
+@for $i from 100 through 900 {
+  .fw-#{$i} {
+    font-weight: #{$i};
+  }
+}
+
+@for $i from 0 through $max-font-size {
+  .fs-#{$i} {
+    font-size: #{$i}px;
+  }
+}
+
+//Vars
+:root {
+  --primary-color: #073380;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.list-counter {
+  border-radius: 8px;
+  background-color: (--primary-color);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+.c-white {
+  color: white;
+}
+.wide {
+  width: 100%;
+}
+.ant-form-item {
+  label {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+  }
+}
+.antd-custom-table {
+  th,
+  .ant-pagination {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+  }
+  .ant-pagination {
+    margin-top: 0 !important;
+    padding: 12px 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+
+    svg {
+      color: white !important;
+    }
+    .ant-pagination-item-ellipsis {
+      color: white !important;
+    }
+    .ant-pagination-item-active a {
+      color: var(--primary-color) !important;
+    }
+    a {
+      color: white !important;
+    }
+  }
+}

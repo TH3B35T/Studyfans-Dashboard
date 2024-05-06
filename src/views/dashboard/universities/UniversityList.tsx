@@ -59,7 +59,7 @@ import { Add, Edit, Eye, Trash } from 'iconsax-react';
 
 // TYPES
 import { ThemeMode } from 'types/config';
-import { UniversityList } from 'types/dashboard/university';
+import { type UniversityList } from 'types/dashboard/university';
 
 const avatarImage = '/assets/images/users';
 

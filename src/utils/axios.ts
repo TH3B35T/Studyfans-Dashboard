@@ -48,3 +48,19 @@ export const fetcherPost = async (args: string | [string, AxiosRequestConfig]) =
 
   return res.data;
 };
+
+export const fetcherPut = async (args: string | [string, AxiosRequestConfig]) => {
+  const [url, config] = Array.isArray(args) ? args : [args];
+
+  const res = await axiosServices.put(url, { ...config });
+
+  return res.data;
+};
+
+export const fetcherDelete = async (args: string | [string, AxiosRequestConfig]) => {
+  const [url, config] = Array.isArray(args) ? args : [args];
+
+  const res = await axiosServices.delete(url, { ...config });
+
+  return res.data;
+};

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 import './globals.css';
+import '../styles/general.scss';
 
 // PROJECT IMPORTS
 import ProviderWrapper from './ProviderWrapper';
