@@ -12,16 +12,11 @@ const initialState: UniversityProps = {
 };
 
 export const endpoints = {
-  key: 'api/university',
-  list: '/list', // server URL
-  modal: '/modal', // server URL
-  insert: '/insert', // server URL
-  update: '/update', // server URL
-  delete: '/delete' // server URL
+  key: 'universities'
 };
 
 export function useGetUniversityList(filter: object | undefined = undefined) {
-  const { data, isLoading, error, isValidating } = useSWR(endpoints.key + endpoints.list, (url) => fetcher([url, { data: filter }]), {
+  const { data, isLoading, error, isValidating } = useSWR(endpoints.key, (url) => fetcher([url, { data: filter }]), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -44,7 +39,7 @@ export function useGetUniversityList(filter: object | undefined = undefined) {
 export async function insertUniversity(newUniversity: OptionalUniversity) {
   // to update local state based on key
   mutate(
-    endpoints.key + endpoints.list,
+    endpoints.key,
     (currentData: { universities: OptionalUniversity[] } | undefined) => {
       if (!currentData) return; // Return early if currentData is undefined
       newUniversity.id = currentData.universities.length + 1;
@@ -57,17 +52,17 @@ export async function insertUniversity(newUniversity: OptionalUniversity) {
     },
     false
   );
-  fetcherPost([endpoints.key + endpoints.insert, { data: newUniversity }]);
+  fetcherPost([endpoints.key, { data: newUniversity }]);
 }
 
-export async function updateUniversity(universityId: number, updatedUniversity: OptionalUniversity) {
+export async function updateUniversity(updatedUniversity: OptionalUniversity) {
   // to update local state based on key
   mutate(
-    endpoints.key + endpoints.list,
+    endpoints.key,
     (currentData: { universities: OptionalUniversity[] } | undefined) => {
       if (!currentData) return; // Return early if currentData is undefined
       const newUniversity: OptionalUniversity[] = currentData.universities.map((university: OptionalUniversity) =>
-        university.id === universityId ? { ...university, ...updatedUniversity } : university
+        university.slug === updatedUniversity.slug ? { ...university, ...updatedUniversity } : university
       );
 
       return {
@@ -78,20 +73,20 @@ export async function updateUniversity(universityId: number, updatedUniversity: 
     false
   );
 
-  fetcherPut([endpoints.key + endpoints.insert, { data: { id: universityId, ...updatedUniversity } }]);
+  fetcherPut([endpoints.key + `/${updatedUniversity.slug}`, { data: { ...updatedUniversity } }]);
   // to hit server
   // you may need to refetch latest data after server hit and based on your logic
   //   const data = { list: updatedUniversity };
   //   await axios.post(endpoints.key + endpoints.update, data);
 }
 
-export async function deleteUniversity(universityId: number) {
+export async function deleteUniversity(slug: string) {
   // to update local state based on key
   mutate(
-    endpoints.key + endpoints.list,
+    endpoints.key,
     (currentData: { universities: OptionalUniversity[] } | undefined) => {
       if (!currentData) return; // Return early if currentData is undefined
-      const nonDeletedUniversity = currentData.universities.filter((university: OptionalUniversity) => university.id !== universityId);
+      const nonDeletedUniversity = currentData.universities.filter((university: OptionalUniversity) => university.slug !== slug);
 
       return {
         ...currentData,
@@ -100,7 +95,7 @@ export async function deleteUniversity(universityId: number) {
     },
     false
   );
-  fetcherDelete([endpoints.key + endpoints.insert, { data: { id: universityId } }]);
+  fetcherDelete(endpoints.key + `/${slug}`);
   // to hit server
   // you may need to refetch latest data after server hit and based on your logic
   //   const data = { universityId };
@@ -108,7 +103,7 @@ export async function deleteUniversity(universityId: number) {
 }
 
 export function useGetUniversityMaster() {
-  const { data, isLoading } = useSWR(endpoints.key + endpoints.modal, () => initialState, {
+  const { data, isLoading } = useSWR(endpoints.key, () => initialState, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -129,7 +124,7 @@ export function handlerUniversityDialog(modal: boolean) {
   // to update local state based on key
 
   mutate(
-    endpoints.key + endpoints.modal,
+    endpoints.key,
     (currentUniversitymaster: any) => {
       return { ...currentUniversitymaster, modal };
     },

@@ -24,8 +24,8 @@ export const UniversityTable = () => {
     setFilterText(e.target.value);
   };
 
-  const onClickDelete = (id: number) => {
-    deleteUniversity(id);
+  const onClickDelete = (slug: string) => {
+    deleteUniversity(slug);
   };
   const toggleAddModal = useMemo(
     () => () => {
@@ -48,7 +48,7 @@ export const UniversityTable = () => {
   const debouncedHandleChange = debounce(handleSearch, 500);
   const onSubmit = (e: OptionalUniversity, images: UploadFile[]) => {
     if (universityModalSettings.universityIdToUpdate) {
-      updateUniversity(universityModalSettings.universityIdToUpdate, e);
+      updateUniversity(e);
       return;
     }
     insertUniversity(e);
@@ -106,47 +106,18 @@ export const UniversityTable = () => {
           )
       },
       {
-        title: (
-          <CSVExport
-            filename="university excel"
-            data={[
-              {
-                id: 2,
-                name: 'uni'
-              },
-              {
-                id: 20,
-                name: 'uni'
-              },
-              {
-                id: 200,
-                name: 'uni'
-              },
-              {
-                id: 2000,
-                name: 'uni'
-              },
-              {
-                id: 21,
-                name: 'uni'
-              },
-              {
-                id: 2425,
-                name: 'uni'
-              }
-            ]}
-          />
-        ),
+        title: <CSVExport filename="university excel" data={universities || []} />,
         key: 'actions',
         fixed: 'right',
         align: 'center',
-        render: (_, { id }) =>
+        render: (_, { slug, id }) =>
+          slug &&
           id && (
             <Flex justify="center" gap="middle">
               <Popconfirm
                 title="Delete University"
                 description="Are You Sure You Want To Delete This University"
-                onConfirm={() => onClickDelete(id)}
+                onConfirm={() => onClickDelete(slug)}
                 okText="Delete"
                 cancelText="Cancel"
               >
@@ -157,7 +128,7 @@ export const UniversityTable = () => {
           )
       }
     ],
-    [onClickUpdate]
+    [onClickUpdate, universities]
   );
 
   return (
@@ -170,32 +141,7 @@ export const UniversityTable = () => {
       <Search size="large" onChange={debouncedHandleChange} placeholder="Universities Filter" />
       <AntdTable
         loading={universitiesLoading}
-        data={[
-          {
-            id: 2,
-            name: 'uni'
-          },
-          {
-            id: 20,
-            name: 'uni'
-          },
-          {
-            id: 200,
-            name: 'uni'
-          },
-          {
-            id: 2000,
-            name: 'uni'
-          },
-          {
-            id: 21,
-            name: 'uni'
-          },
-          {
-            id: 2425,
-            name: 'uni'
-          }
-        ]}
+        data={universities || []}
         handleOnChangePage={setPage}
         handleOnChangeLimit={setLimit}
         columns={columns}
