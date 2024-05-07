@@ -2,26 +2,21 @@ import useSWR, { mutate } from 'swr';
 import { useMemo } from 'react';
 
 // utils
-import { fetcher } from 'utils/axios';
+import { fetcher, fetcherDelete, fetcherPost, fetcherPut } from 'utils/axios';
 
 // types
-import { UniversityList, UniversityProps } from 'types/dashboard/university';
+import { OptionalUniversity, University, UniversityProps } from 'types/dashboard/university';
 
 const initialState: UniversityProps = {
   modal: false
 };
 
 export const endpoints = {
-  key: 'api/customer',
-  list: '/list', // server URL
-  modal: '/modal', // server URL
-  insert: '/insert', // server URL
-  update: '/update', // server URL
-  delete: '/delete' // server URL
+  key: 'universities'
 };
 
-export function useGetUniversity() {
-  const { data, isLoading, error, isValidating } = useSWR(endpoints.key + endpoints.list, fetcher, {
+export function useGetUniversityList(filter: object | undefined = undefined) {
+  const { data, isLoading, error, isValidating } = useSWR(endpoints.key, (url) => fetcher([url, { data: filter }]), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -29,7 +24,7 @@ export function useGetUniversity() {
 
   const memoizedValue = useMemo(
     () => ({
-      universities: data?.customers as UniversityList[],
+      universities: data?.customers as University[] | undefined,
       universitiesLoading: isLoading,
       universitiesError: error,
       universitiesValidating: isValidating,
@@ -41,66 +36,66 @@ export function useGetUniversity() {
   return memoizedValue;
 }
 
-export async function insertUniversity(newUniversity: UniversityList) {
+export async function insertUniversity(newUniversity: OptionalUniversity) {
   // to update local state based on key
   mutate(
-    endpoints.key + endpoints.list,
-    (currentUniversity: any) => {
-      newUniversity.id = currentUniversity.universities.length + 1;
-      const addedUniversity: UniversityList[] = [...currentUniversity.universities, newUniversity];
+    endpoints.key,
+    (currentData: { universities: OptionalUniversity[] } | undefined) => {
+      if (!currentData) return; // Return early if currentData is undefined
+      newUniversity.id = currentData.universities.length + 1;
+      const addedUniversity: OptionalUniversity[] = [...currentData.universities, newUniversity];
 
       return {
-        ...currentUniversity,
+        ...currentData,
         universities: addedUniversity
       };
     },
     false
   );
-
-  // to hit server
-  // you may need to refetch latest data after server hit and based on your logic
-  //   const data = { newUniversity };
-  //   await axios.post(endpoints.key + endpoints.insert, data);
+  fetcherPost([endpoints.key, { data: newUniversity }]);
 }
 
-export async function updateUniversity(universityId: number, updatedUniversity: UniversityList) {
+export async function updateUniversity(updatedUniversity: OptionalUniversity) {
   // to update local state based on key
   mutate(
-    endpoints.key + endpoints.list,
-    (currentUniversity: any) => {
-      const newUniversity: UniversityList[] = currentUniversity.universities.map((university: UniversityList) =>
-        university.id === universityId ? { ...university, ...updatedUniversity } : university
+    endpoints.key,
+    (currentData: { universities: OptionalUniversity[] } | undefined) => {
+      if (!currentData) return; // Return early if currentData is undefined
+      const newUniversity: OptionalUniversity[] = currentData.universities.map((university: OptionalUniversity) =>
+        university.slug === updatedUniversity.slug ? { ...university, ...updatedUniversity } : university
       );
 
       return {
-        ...currentUniversity,
+        ...currentData,
         universities: newUniversity
       };
     },
     false
   );
 
+  fetcherPut([endpoints.key + `/${updatedUniversity.slug}`, { data: { ...updatedUniversity } }]);
   // to hit server
   // you may need to refetch latest data after server hit and based on your logic
   //   const data = { list: updatedUniversity };
   //   await axios.post(endpoints.key + endpoints.update, data);
 }
 
-export async function deleteUniversity(universityId: number) {
+export async function deleteUniversity(slug: string) {
   // to update local state based on key
   mutate(
-    endpoints.key + endpoints.list,
-    (currentUniversity: any) => {
-      const nonDeletedUniversity = currentUniversity.universities.filter((university: UniversityList) => university.id !== universityId);
+    endpoints.key,
+    (currentData: { universities: OptionalUniversity[] } | undefined) => {
+      if (!currentData) return; // Return early if currentData is undefined
+      const nonDeletedUniversity = currentData.universities.filter((university: OptionalUniversity) => university.slug !== slug);
 
       return {
-        ...currentUniversity,
+        ...currentData,
         universities: nonDeletedUniversity
       };
     },
     false
   );
-
+  fetcherDelete(endpoints.key + `/${slug}`);
   // to hit server
   // you may need to refetch latest data after server hit and based on your logic
   //   const data = { universityId };
@@ -108,7 +103,7 @@ export async function deleteUniversity(universityId: number) {
 }
 
 export function useGetUniversityMaster() {
-  const { data, isLoading } = useSWR(endpoints.key + endpoints.modal, () => initialState, {
+  const { data, isLoading } = useSWR(endpoints.key, () => initialState, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -129,7 +124,7 @@ export function handlerUniversityDialog(modal: boolean) {
   // to update local state based on key
 
   mutate(
-    endpoints.key + endpoints.modal,
+    endpoints.key,
     (currentUniversitymaster: any) => {
       return { ...currentUniversitymaster, modal };
     },
